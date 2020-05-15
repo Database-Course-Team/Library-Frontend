@@ -9,6 +9,7 @@ import {AuthService} from '../../service/auth/auth.service';
 })
 export class AppComponent {
   title = 'Library';
+  curUser = '';
 
   constructor(private router: Router,
               private authService: AuthService) {
@@ -20,6 +21,11 @@ export class AppComponent {
   }
 
   isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
+    if (this.authService.isLoggedIn()) {
+      this.curUser = localStorage.getItem('curUser');
+      return true;
+    } else {
+      return false;
+    }
   }
 }

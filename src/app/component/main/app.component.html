@@ -2,10 +2,19 @@
   <nz-header>
     <div class="logo"></div>
     <ul nz-menu nzTheme="dark" nzMode="horizontal">
-      <li nz-menu-item>nav 1</li>
-      <li nz-menu-item>nav 2</li>
-      <li nz-menu-item>nav 3</li>
-      <a (click)="logout()">Logout</a>
+      <li nz-menu-item *ngIf="isLoggedIn()">
+        <a nz-dropdown [nzDropdownMenu]="menu">
+          您好， {{curUser}}
+          <i nz-icon nzType="down"></i>
+        </a>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu nzSelectable>
+            <li nz-menu-item>
+              <a (click)="logout()">登出</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </li>
     </ul>
   </nz-header>
   <nz-content>
