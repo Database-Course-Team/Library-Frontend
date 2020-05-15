@@ -1,6 +1,6 @@
 <div>
   <input nz-input type="text" placeholder="请输入登录ID" [(ngModel)]="inputId" />
-  <input nz-input type="password" placeholder="请输入登录密码" [(ngModel)]="inputPassword" />
+  <input nz-input type="password" placeholder="请输入登录密码" (keyup.enter)="login()" [(ngModel)]="inputPassword" />
   <button nz-button nzType="primary" (click)="login()">登录</button>
 </div>
 

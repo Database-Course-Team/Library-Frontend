@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from '../../service/api/api.service';
 import {Router} from '@angular/router';
+import {NzMessageService} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,8 @@ export class LoginComponent implements OnInit {
   inputPassword = '';
 
   constructor(private apiService: ApiService,
-              private router: Router) { }
+              private router: Router,
+              private message: NzMessageService) { }
 
   ngOnInit(): void {
   }
@@ -23,7 +25,8 @@ export class LoginComponent implements OnInit {
         const data = response.json();
         if (data.Status === 'success') {
           localStorage.setItem('curUser', this.inputId);
-          console.log(data);
+        } else {
+          this.message.error(data.Detail);
         }
         this.router.navigate(['/']);
       });
