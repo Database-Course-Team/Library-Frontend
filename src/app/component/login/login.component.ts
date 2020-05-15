@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ApiService} from '../../service/api/api.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,18 +11,21 @@ export class LoginComponent implements OnInit {
   inputId = '';
   inputPassword = '';
 
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService,
+              private router: Router) { }
 
   ngOnInit(): void {
   }
 
   login() {
-    this.apiService.login({Id: this.inputId, Password: this.inputPassword})
+    this.apiService.login({Id: parseInt(this.inputId, 10), Password: this.inputPassword})
       .subscribe(response => {
         const data = response.json();
         if (data.Status === 'success') {
-          console.log(data.Detail);
+          localStorage.setItem('curUser', this.inputId);
+          console.log(data);
         }
+        this.router.navigate(['/']);
       });
   }
 
