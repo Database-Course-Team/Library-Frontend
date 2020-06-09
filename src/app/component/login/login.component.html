@@ -1,6 +1,17 @@
 <div>
-  <input nz-input type="text" placeholder="请输入登录ID" [(ngModel)]="inputId" />
-  <input nz-input type="password" placeholder="请输入登录密码" (keyup.enter)="login()" [(ngModel)]="inputPassword" />
-  <button nz-button nzType="primary" (click)="login()">登录</button>
+  <input *ngIf="curMode === 'login'" nz-input type="text" placeholder="请输入登录ID" [(ngModel)]="inputId" />
+  <input *ngIf="curMode === 'login'" nz-input type="password" placeholder="请输入登录密码" (keyup.enter)="login()" [(ngModel)]="inputPassword" />
+  <input *ngIf="curMode === 'register'" nz-input type="text" placeholder="请输入用户名" [(ngModel)]="registerName" />
+  <input *ngIf="curMode === 'register'" nz-input type="password" placeholder="请输入密码" [(ngModel)]="registerPassword" />
+  <input *ngIf="curMode === 'register'" nz-input type="text" placeholder="请输入邮箱" [(ngModel)]="registerEmail" />
+  <input *ngIf="curMode === 'register'" nz-input type="text" placeholder="请输入电话号码" [(ngModel)]="registerTel" />
+  <nz-select *ngIf="curMode === 'register'" [(ngModel)]="registerRole">
+    <nz-option nzValue="1" nzLabel="读者"></nz-option>
+    <nz-option nzValue="0" nzLabel="管理员"></nz-option>
+  </nz-select>
+  <button *ngIf="curMode === 'login'" nz-button nzType="primary" (click)="login()">登录</button>
+  <button *ngIf="curMode === 'login'" nz-button nzType="primary" (click)="switch()">注册</button>
+  <button *ngIf="curMode === 'register'" nz-button nzType="primary" (click)="switch()">返回登录</button>
+  <button *ngIf="curMode === 'register'" nz-button nzType="primary" (click)="register()">注册</button>
 </div>
 

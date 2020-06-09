@@ -13,4 +13,22 @@ export class ApiService {
     const body = JSON.stringify(user);
     return this.http.post(`${this.baseUrl}/login`, body);
   }
+
+  register(user) {
+    const body = JSON.stringify(user);
+    return this.http.post(`${this.baseUrl}/register`, body);
+  }
+
+  getBooks() {
+    return this.http.get(`${this.baseUrl}/books`);
+  }
+
+  getIsbnInfo(isbn) {
+    return this.http.get(`${this.baseUrl}/bookInfo?Isbn=${isbn}`);
+  }
+
+  borrow(info) {
+    const body = JSON.stringify(info);
+    return this.http.post(`${this.baseUrl}/booksLend`, body);
+  }
 }

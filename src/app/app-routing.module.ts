@@ -9,7 +9,7 @@ import {GivebackComponent} from './component/giveback/giveback.component';
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/home', pathMatch: 'full'},
+  {path: '', redirectTo: '/borrow', pathMatch: 'full'},
   {path: 'login', component: LoginComponent},
   {path: 'home', canActivate: [AuthGuardService], component: HomeComponent},
   {path: 'borrow', canActivate: [AuthGuardService], component: BorrowComponent},

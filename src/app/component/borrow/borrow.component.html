@@ -1,1 +1,36 @@
-<p>borrow works!</p>
+<nz-table #basicTable [nzData]="books">
+  <thead>
+  <tr>
+    <th>ISBN</th>
+    <th>书名</th>
+    <th>作者</th>
+    <th>出版社</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tr *ngFor="let d of books">
+    <td>{{d.Isbn}}</td>
+    <td>{{d.BookName}}</td>
+    <td>{{d.Author}}</td>
+    <td>{{d.Press}}</td>
+    <td><a (click)="showModal(d.Isbn)">借书</a></td>
+  </tr>
+</nz-table>
+<nz-modal [(nzVisible)]="borrowVisible" nzTitle="书目信息" (nzOnCancel)="handleCancel()">
+  <nz-table #basicTable [nzData]="isbnInfo">
+    <thead>
+    <tr>
+      <th>编号</th>
+      <th>位置</th>
+      <th>状态</th>
+      <th>操作</th>
+    </tr>
+    </thead>
+    <tr *ngFor="let d of isbnInfo">
+      <td>{{d.Id}}</td>
+      <td>{{d.Location}}</td>
+      <td>{{d.Status}}</td>
+      <td><a (click)="borrow(d.Id)">借书</a></td>
+    </tr>
+  </nz-table>
+</nz-modal>
