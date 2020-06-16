@@ -1,1 +1,22 @@
-<p>giveback works!</p>
+<nz-table #basicTable [nzData]="records">
+  <thead>
+  <tr>
+    <th>编号</th>
+    <th>书名</th>
+    <th>借书时间</th>
+    <th>到期时间</th>
+    <th>操作</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let d of records">
+    <td>{{d.BookId}}</td>
+    <td>{{d.BookName}}</td>
+    <td>{{d.BorrowDate}}</td>
+    <td>{{d.ExpireDate}}</td>
+    <td>
+      <a (click)="giveback(d.BookId)">还书</a>
+    </td>
+  </tr>
+  </tbody>
+</nz-table>

@@ -31,4 +31,13 @@ export class ApiService {
     const body = JSON.stringify(info);
     return this.http.post(`${this.baseUrl}/booksLend`, body);
   }
+
+  getBorrowInfo(userid) {
+    return this.http.get(`${this.baseUrl}/booksLend?UserId=${userid}`);
+  }
+
+  giveBack(info) {
+    const body = JSON.stringify(info);
+    return this.http.post(`${this.baseUrl}/return`, body);
+  }
 }
