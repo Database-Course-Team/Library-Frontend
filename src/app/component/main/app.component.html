@@ -2,11 +2,11 @@
   <nz-header>
     <div class="logo"></div>
     <ul nz-menu nzTheme="dark" nzMode="horizontal">
-      <li nz-menu-item *ngIf="isLoggedIn()" routerLink="borrow">借书</li>
-      <li nz-menu-item *ngIf="isLoggedIn()" routerLink="giveback">还书</li>
+      <li nz-menu-item *ngIf="isLoggedIn()" routerLink="borrow">书目浏览</li>
+      <li nz-menu-item *ngIf="isLoggedIn()" routerLink="giveback">借阅管理</li>
       <li nz-menu-item *ngIf="isLoggedIn()">
         <a nz-dropdown [nzDropdownMenu]="menu">
-          您好， {{curUser}}
+          欢迎您， {{curUserName}}
           <i nz-icon nzType="down"></i>
         </a>
         <nz-dropdown-menu #menu="nzDropdownMenu">

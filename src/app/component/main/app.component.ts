@@ -9,7 +9,8 @@ import {AuthService} from '../../service/auth/auth.service';
 })
 export class AppComponent {
   title = 'Library';
-  curUser = '';
+  curUserName = '';
+  curRole = '';
 
   constructor(private router: Router,
               private authService: AuthService) {
@@ -17,12 +18,15 @@ export class AppComponent {
 
   logout() {
     localStorage.removeItem('curUser');
+    localStorage.removeItem('curUserName');
+    localStorage.removeItem('curRole');
     this.router.navigate(['/login']);
   }
 
   isLoggedIn(): boolean {
     if (this.authService.isLoggedIn()) {
-      this.curUser = localStorage.getItem('curUser');
+      this.curUserName = localStorage.getItem('curUserName');
+      this.curRole = localStorage.getItem('curRole');
       return true;
     } else {
       return false;

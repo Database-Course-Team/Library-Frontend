@@ -33,6 +33,8 @@ export class LoginComponent implements OnInit {
         const data = response.json();
         if (data.Status === 'success') {
           localStorage.setItem('curUser', this.inputId);
+          localStorage.setItem('curUserName', data.Data[0].Name);
+          localStorage.setItem('curRole', this.inputId.length === 4 ? 'admin' : 'reader');
         } else {
           this.message.error(data.Detail);
         }
@@ -60,7 +62,6 @@ export class LoginComponent implements OnInit {
         const data = response.json();
         if (data.Status === 'success') {
           this.curMode = 'login';
-          console.log(data);
           this.message.success(`注册成功，注册ID为${data.Data[0].Id}`);
         } else {
           this.message.error('注册失败');

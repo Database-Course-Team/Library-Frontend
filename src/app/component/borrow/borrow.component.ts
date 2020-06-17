@@ -28,7 +28,6 @@ export class BorrowComponent implements OnInit {
       .subscribe(response => {
         const data = response.json();
         this.isbnInfo = data.Data;
-        console.log(this.isbnInfo);
       });
     this.borrowVisible = true;
   }
