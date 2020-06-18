@@ -14,12 +14,14 @@ export class BorrowComponent implements OnInit {
 
   bookInfoForm!: FormGroup;
   bookStoreForm!: FormGroup;
+  adminBorrowForm!: FormGroup;
   books = [];
   isbnInfo = [];
   borrowVisible = false;
   newBookVisible = false;
   addBookVisible = false;
   transferVisible = false;
+  adminBorrowVisible = false;
   isbnSearching = false;
   searchInput = '';
   curUser = '';
@@ -27,6 +29,7 @@ export class BorrowComponent implements OnInit {
   inputIsbn = '';
   curLocation = '';
   curStoreLocation = '';
+  curAdminBorrow = 0;
   bookTransfer: TransferItem[] = [];
 
   constructor(private apiService: ApiService,
@@ -57,6 +60,10 @@ export class BorrowComponent implements OnInit {
       Location: '',
       Handler: parseInt(this.curUser, 10),
       Number: 1
+    });
+    this.adminBorrowForm = this.fb.group({
+      UserId: '',
+      BookId: []
     });
   }
 
@@ -293,10 +300,13 @@ export class BorrowComponent implements OnInit {
       .subscribe(response => {
         const data = response.json();
         if (data.Status === 'success') {
+          this.getBooks();
           this.message.success(data.Detail);
           this.borrowVisible = false;
         } else {
+          this.getBooks();
           this.message.error(data.Detail);
+          this.borrowVisible = false;
         }
       });
   }
@@ -315,6 +325,42 @@ export class BorrowComponent implements OnInit {
         } else {
           this.getBooks();
           this.message.error('预约失败，请联系管理员');
+        }
+      });
+  }
+
+  // Show Admin Borrow Modal
+  showAdminBorrowModal(bookid) {
+    this.curAdminBorrow = bookid;
+    this.adminBorrowVisible = true;
+  }
+  handleAdminBorrowCancel() {
+    this.adminBorrowVisible = false;
+  }
+  setSelf() {
+    this.adminBorrowForm.setValue({
+      UserId: this.curUser,
+      BookId: this.adminBorrowForm.value.BookId
+    });
+  }
+  adminBorrow() {
+    const d = {
+      UserId: parseInt(this.adminBorrowForm.value.UserId, 10),
+      BookId: [this.curAdminBorrow]
+    };
+    this.apiService.borrow(d)
+      .subscribe(response => {
+        const data = response.json();
+        if (data.Status === 'success') {
+          this.getBooks();
+          this.message.success(data.Detail);
+          this.adminBorrowVisible = false;
+          this.borrowVisible = false;
+        } else {
+          this.getBooks();
+          this.message.error(data.Detail);
+          this.adminBorrowVisible = false;
+          this.borrowVisible = false;
         }
       });
   }

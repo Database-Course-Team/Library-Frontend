@@ -50,7 +50,8 @@
       <td>{{d.Location}}</td>
       <td>{{d.Status}}</td>
       <td>
-        <a *ngIf="d.Status === '未借出' || d.Status === '已预约'" (click)="borrow(d.Id)">借书</a>
+        <a *ngIf="(d.Status === '未借出' || d.Status === '已预约') && curRole === 'admin'" (click)="showAdminBorrowModal(d.Id)">借书</a>
+        <a *ngIf="(d.Status === '未借出' || d.Status === '已预约') && curRole === 'reader'" (click)="borrow(d.Id)">借书</a>
         <a *ngIf="d.Status !== '未借出' && d.Status !== '已预约'" disabled>借书</a>
       </td>
     </tr>
@@ -166,12 +167,34 @@
   </div>
 </nz-modal>
 
+<nz-modal [(nzVisible)]="adminBorrowVisible" nzTitle="请选择借书用户" [nzFooter]="null" (nzOnCancel)="handleAdminBorrowCancel()">
+  <form nz-form [formGroup]="adminBorrowForm">
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">入库位置</nz-form-label>
+      <nz-form-control nzErrorTip="请输入用户">
+        <nz-input-group nzSearch [nzAddOnAfter]="adminBorrowSuffix">
+          <input type="text" nz-input formControlName="UserId" placeholder="请输入用户" />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row>
+      <nz-form-control [nzSpan]="14" [nzOffset]="6">
+        <button nz-button nzType="primary" (click)="adminBorrow()">确认</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-modal>
+
 <ng-template #suffixButton>
   <button nz-button nzType="primary" nzSearch (click)="showNewBookModal()">添加书目</button>
 </ng-template>
 
 <ng-template #isbnSuffixButton>
   <button nz-button nzSearch (click)="searchIsbn()">查询ISBN</button>
+</ng-template>
+
+<ng-template #adminBorrowSuffix>
+  <button nz-button nzSearch (click)="setSelf()">自己</button>
 </ng-template>
 
 <ng-template #trans>
