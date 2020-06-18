@@ -6,7 +6,7 @@
   <input class="search" type="text" nz-input placeholder="请输入书名查询..." [(ngModel)]="searchInput" (change)="search()" />
 </nz-input-group>
 
-<nz-table class = "information" #basicTable [nzData]="books">
+<nz-table class = "information"  [nzData]="books">
   <thead>
   <tr>
     <th class = "tab">ISBN</th>
@@ -18,20 +18,22 @@
     <th class = "tab">操作</th>
   </tr>
   </thead>
-  <tr class = "book" *ngFor="let d of books">
-    <td>{{d.Isbn}}</td>
-    <td>{{d.BookName}}</td>
-    <td>{{d.Author}}</td>
-    <td>{{d.Press}}</td>
-    <td>{{d.Count}}</td>
-    <td>{{d.AvailableNum}}</td>
-    <td>
-      <a class = "click" (click)="showBorrowModal(d.Isbn)" >查看书目</a>
-      <a class = "click" *ngIf="d.AvailableNum === 0" (click)="reserve(d.Isbn)">预约</a>
-      <a class = "click" *ngIf="d.AvailableNum !== 0" disabled>预约</a>
-      <a class = "click" *ngIf="curRole === 'admin'" (click)="showAddBookModal(d)">入库</a>
-    </td>
-  </tr>
+  <tbody>
+    <tr class = "book" *ngFor="let d of books">
+      <td>{{d.Isbn}}</td>
+      <td>{{d.BookName}}</td>
+      <td>{{d.Author}}</td>
+      <td>{{d.Press}}</td>
+      <td>{{d.Count}}</td>
+      <td>{{d.AvailableNum}}</td>
+      <td>
+        <a class = "click" (click)="showBorrowModal(d.Isbn)" >查看书目</a>
+        <a class = "click" *ngIf="d.AvailableNum === 0" (click)="reserve(d.Isbn)">预约</a>
+        <a class = "click" *ngIf="d.AvailableNum !== 0" disabled>预约</a>
+        <a class = "click" *ngIf="curRole === 'admin'" (click)="showAddBookModal(d)">入库</a>
+      </td>
+    </tr>
+  </tbody>
 </nz-table>
 
 <nz-modal [(nzVisible)]="borrowVisible" nzTitle="书目信息" [nzFooter]="null" (nzOnCancel)="handleBorrowCancel()">
