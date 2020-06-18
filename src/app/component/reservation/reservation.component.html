@@ -2,6 +2,7 @@
   <thead>
   <tr>
     <th>ISBN</th>
+    <th>书名</th>
     <th>预约日期</th>
     <th>图书状态</th>
     <th>到期日期</th>
@@ -10,6 +11,7 @@
   <tbody>
   <tr *ngFor="let d of reservations">
     <td>{{d.Isbn}}</td>
+    <td>{{d.BookName}}</td>
     <td>{{d.ReserveDate}}</td>
     <td>{{getStatus(d)}}</td>
     <td>{{d.ExpireDate}}</td>
