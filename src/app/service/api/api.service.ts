@@ -55,4 +55,8 @@ export class ApiService {
     const body = JSON.stringify(info);
     return this.http.post(`${this.baseUrl}/reservation`, body);
   }
+
+  getHistoryByUser(uid) {
+    return this.http.get(`${this.baseUrl}/history?UserId=${uid}`);
+  }
 }

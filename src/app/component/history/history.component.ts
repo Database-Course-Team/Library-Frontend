@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ApiService} from '../../service/api/api.service';
 
 @Component({
   selector: 'app-history',
@@ -6,10 +7,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./history.component.less']
 })
 export class HistoryComponent implements OnInit {
+  histories = [];
 
-  constructor() { }
+  constructor(private apiService: ApiService) { }
 
   ngOnInit(): void {
+    this.apiService.getHistoryByUser(localStorage.getItem('curUser'))
+      .subscribe(response => {
+        const data = response.json();
+        this.histories = data.Data;
+      });
   }
 
 }
