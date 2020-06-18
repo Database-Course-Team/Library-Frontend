@@ -73,4 +73,9 @@ export class ApiService {
   getReservation(uid) {
     return this.http.get(`${this.baseUrl}/reservation?UserId=${uid}`);
   }
+
+  changePassword(info) {
+    const body = JSON.stringify(info);
+    return this.http.post(`${this.baseUrl}/account`, body);
+  }
 }
