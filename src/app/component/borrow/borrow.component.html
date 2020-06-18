@@ -31,6 +31,7 @@
         <a class = "click" *ngIf="d.AvailableNum === 0" (click)="reserve(d.Isbn)">预约</a>
         <a class = "click" *ngIf="d.AvailableNum !== 0" disabled>预约</a>
         <a class = "click" *ngIf="curRole === 'admin'" (click)="showAddBookModal(d)">入库</a>
+        <a class = "click" *ngIf="curRole === 'admin'" (click)="showTransferModal(d.Isbn)">迁移</a>
       </td>
     </tr>
   </tbody>
