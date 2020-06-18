@@ -55,7 +55,8 @@ export class BorrowComponent implements OnInit {
       Press: '',
       PublishDate: '',
       Location: '',
-      Handler: parseInt(this.curUser, 10)
+      Handler: parseInt(this.curUser, 10),
+      Number: 1
     });
   }
 
@@ -155,7 +156,8 @@ export class BorrowComponent implements OnInit {
       Press: info.Press,
       PublishDate: pubdate.getFullYear().toString() + '-' + intToStr(pubdate.getMonth()),
       Location: '',
-      Handler: parseInt(this.curUser, 10)
+      Handler: parseInt(this.curUser, 10),
+      Number: 1
     });
     this.addBookVisible = true;
   }
@@ -163,17 +165,32 @@ export class BorrowComponent implements OnInit {
     this.addBookVisible = false;
   }
   addBook() {
-    console.log(JSON.stringify(this.bookStoreForm.value));
-    this.apiService.addNewBook(this.bookStoreForm.value)
+    const d = [];
+    for (let i = 0; i < this.bookStoreForm.value.Number; i++) {
+      d.push({
+        Isbn: this.bookStoreForm.value.Isbn,
+        BookName: this.bookStoreForm.value.BookName,
+        Author: this.bookStoreForm.value.Author,
+        Coauthor: this.bookStoreForm.value.Coauthor,
+        Press: this.bookStoreForm.value.Press,
+        PublishDate: this.bookStoreForm.value.PublishDate,
+        Location: this.bookStoreForm.value.Location,
+        Handler: this.bookStoreForm.value.Handler,
+      });
+    }
+    console.log(d);
+    this.apiService.addNewBookBatch({
+      Data: d
+    })
       .subscribe(response => {
         const data = response.json();
-        if (data.Status === 'warning') {
+        if (data.Status === 'success') {
           this.getBooks();
-          this.message.success('成功入库');
+          this.message.success(data.Detail);
           this.addBookVisible = false;
         } else {
           this.getBooks();
-          this.message.error('入库失败');
+          this.message.error(data.Detail);
           this.addBookVisible = false;
         }
       });

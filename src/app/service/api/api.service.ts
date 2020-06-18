@@ -51,6 +51,11 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/books`, body);
   }
 
+  addNewBookBatch(info) {
+    const body = JSON.stringify(info);
+    return this.http.post(`${this.baseUrl}/booksBatch`, body);
+  }
+
   reserveBook(info) {
     const body = JSON.stringify(info);
     return this.http.post(`${this.baseUrl}/reservation`, body);
