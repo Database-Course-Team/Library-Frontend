@@ -64,4 +64,8 @@ export class ApiService {
     const body = JSON.stringify(info);
     return this.http.post(`${this.baseUrl}/booksTransfer`, body);
   }
+
+  getReservation(uid) {
+    return this.http.get(`${this.baseUrl}/reservation?UserId=${uid}`);
+  }
 }
