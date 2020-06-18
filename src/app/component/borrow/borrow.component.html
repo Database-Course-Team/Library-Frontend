@@ -1,3 +1,11 @@
+<nz-input-group nzSearch *ngIf="curRole !== 'admin'">
+  <input class="search" type="text" nz-input placeholder="请输入书名查询..." [(ngModel)]="searchInput" (change)="search()" />
+</nz-input-group>
+
+<nz-input-group nzSearch *ngIf="curRole === 'admin'" [nzAddOnAfter]="suffixButton">
+  <input class="search" type="text" nz-input placeholder="请输入书名查询..." [(ngModel)]="searchInput" (change)="search()" />
+</nz-input-group>
+
 <nz-table #basicTable [nzData]="books">
   <thead>
   <tr>
@@ -5,6 +13,8 @@
     <th>书名</th>
     <th>作者</th>
     <th>出版社</th>
+    <th>总数</th>
+    <th>可借数量</th>
     <th>操作</th>
   </tr>
   </thead>
@@ -13,10 +23,18 @@
     <td>{{d.BookName}}</td>
     <td>{{d.Author}}</td>
     <td>{{d.Press}}</td>
-    <td><a (click)="showModal(d.Isbn)">借书</a></td>
+    <td>{{d.Count}}</td>
+    <td>{{d.AvailableNum}}</td>
+    <td>
+      <a (click)="showBorrowModal(d.Isbn)" >查看书目</a>
+      <a *ngIf="d.AvailableNum === 0" (click)="reserve(d.Isbn)">预约</a>
+      <a *ngIf="d.AvailableNum !== 0" disabled>预约</a>
+      <a *ngIf="curRole === 'admin'" (click)="showAddBookModal(d)">入库</a>
+    </td>
   </tr>
 </nz-table>
-<nz-modal [(nzVisible)]="borrowVisible" nzTitle="书目信息" (nzOnCancel)="handleCancel()">
+
+<nz-modal [(nzVisible)]="borrowVisible" nzTitle="书目信息" [nzFooter]="null" (nzOnCancel)="handleBorrowCancel()">
   <nz-table #basicTable [nzData]="isbnInfo">
     <thead>
     <tr>
@@ -30,7 +48,120 @@
       <td>{{d.Id}}</td>
       <td>{{d.Location}}</td>
       <td>{{d.Status}}</td>
-      <td><a (click)="borrow(d.Id)">借书</a></td>
+      <td>
+        <a *ngIf="d.Status === '未借出' || d.Status === '已预约'" (click)="borrow(d.Id)">借书</a>
+        <a *ngIf="d.Status !== '未借出' && d.Status !== '已预约'" disabled>借书</a>
+        <a *ngIf="curRole === 'admin'" (click)="showTransferModal(d.Id)">迁移</a>
+      </td>
     </tr>
   </nz-table>
 </nz-modal>
+
+<nz-modal [(nzVisible)]="newBookVisible" nzTitle="新增书目" [nzFooter]="null" (nzOnCancel)="handleNewBookCancel()">
+  <div style="text-align: center">
+    <nz-spin nzSimple *ngIf="isbnSearching"></nz-spin>
+  </div>
+  <form nz-form [formGroup]="bookInfoForm" >
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">
+        <span>
+          ISBN
+          <i nz-icon nz-tooltip
+             nzTooltipTitle="可以连接数据库查询ISBN信息，如果输入的ISBN查询成功，将自动填充下方的书目信息"
+             nzType="question-circle"
+             nzTheme="outline"></i>
+        </span>
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入ISBN">
+        <nz-input-group nzSearch [nzAddOnAfter]="isbnSuffixButton">
+          <input type="text" nz-input formControlName="Isbn" [(ngModel)]="inputIsbn">
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">书名</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入书名">
+        <input type="text" nz-input formControlName="BookName">
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">作者</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入作者">
+        <input type="text" nz-input formControlName="Author">
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">出版社</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入出版社">
+        <input type="text" nz-input formControlName="Press">
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">
+        <span>
+          出版时间
+          <i nz-icon nz-tooltip
+             nzTooltipTitle="如果是手动输入，格式为YYYY-MM，例如：2014-01"
+             nzType="question-circle"
+             nzTheme="outline"></i>
+        </span>
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请输入出版时间">
+        <input type="text" nz-input formControlName="PublishDate">
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">入库位置</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="请选择入库位置">
+        <nz-select
+          id="location"
+          formControlName="Location"
+          [(ngModel)]="curLocation"
+          >
+          <nz-option nzValue="图书流通室" nzLabel="图书流通室"></nz-option>
+          <nz-option nzValue="图书阅览室" nzLabel="图书阅览室"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row>
+      <nz-form-control [nzSpan]="14" [nzOffset]="6">
+        <button nz-button nzType="primary" (click)="addNewBook()">确认</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="addBookVisible" nzTitle="书本入库" [nzFooter]="null" (nzOnCancel)="handleAddBookModal()">
+  <form nz-form [formGroup]="bookStoreForm">
+    <nz-form-item>
+      <nz-form-label [nzSm]="6" [nzXs]="24">入库位置</nz-form-label>
+      <nz-form-control nzErrorTip="请输入入库位置">
+        <nz-select
+          id="location-store"
+          formControlName="Location"
+          [(ngModel)]="curStoreLocation"
+          >
+          <nz-option nzValue="图书流通室" nzLabel="图书流通室"></nz-option>
+          <nz-option nzValue="图书阅览室" nzLabel="图书阅览室"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row>
+      <nz-form-control [nzSpan]="14" [nzOffset]="6">
+        <button nz-button nzType="primary" (click)="addBook()">确认</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="transferVisible" nzTitle="书本迁移" (nzOnCancel)="handleTransferModal()">
+  <p>迁移</p>
+</nz-modal>
+
+<ng-template #suffixButton>
+  <button nz-button nzType="primary" nzSearch (click)="showNewBookModal()">添加书目</button>
+</ng-template>
+
+<ng-template #isbnSuffixButton>
+  <button nz-button nzSearch (click)="searchIsbn()">查询ISBN</button>
+</ng-template>
