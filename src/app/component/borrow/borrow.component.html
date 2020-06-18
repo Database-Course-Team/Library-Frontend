@@ -30,6 +30,7 @@
       <a *ngIf="d.AvailableNum === 0" (click)="reserve(d.Isbn)">预约</a>
       <a *ngIf="d.AvailableNum !== 0" disabled>预约</a>
       <a *ngIf="curRole === 'admin'" (click)="showAddBookModal(d)">入库</a>
+      <a *ngIf="curRole === 'admin'" (click)="showTransferModal(d.Isbn)">迁移</a>
     </td>
   </tr>
 </nz-table>
@@ -51,7 +52,6 @@
       <td>
         <a *ngIf="d.Status === '未借出' || d.Status === '已预约'" (click)="borrow(d.Id)">借书</a>
         <a *ngIf="d.Status !== '未借出' && d.Status !== '已预约'" disabled>借书</a>
-        <a *ngIf="curRole === 'admin'" (click)="showTransferModal(d.Id)">迁移</a>
       </td>
     </tr>
   </nz-table>
@@ -154,8 +154,10 @@
   </form>
 </nz-modal>
 
-<nz-modal [(nzVisible)]="transferVisible" nzTitle="书本迁移" (nzOnCancel)="handleTransferModal()">
-  <p>迁移</p>
+<nz-modal [(nzVisible)]="transferVisible" nzTitle="书本迁移" [nzFooter]="null" (nzOnCancel)="handleTransferModal()">
+  <div>
+    <ng-container #outlet></ng-container>
+  </div>
 </nz-modal>
 
 <ng-template #suffixButton>
@@ -164,4 +166,13 @@
 
 <ng-template #isbnSuffixButton>
   <button nz-button nzSearch (click)="searchIsbn()">查询ISBN</button>
+</ng-template>
+
+<ng-template #trans>
+  <nz-transfer
+    [nzDataSource]="bookTransfer"
+    [nzTitles]="['图书流通室', '图书阅览室']"
+    (nzChange)="transfer($event)"
+  >
+  </nz-transfer>
 </ng-template>

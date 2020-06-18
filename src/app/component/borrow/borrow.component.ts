@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild, ViewContainerRef} from '@angular/core';
 import {ApiService} from '../../service/api/api.service';
-import {NzMessageService} from 'ng-zorro-antd';
+import {NzMessageService, TransferItem} from 'ng-zorro-antd';
 import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
@@ -9,6 +9,9 @@ import {FormBuilder, FormGroup} from '@angular/forms';
   styleUrls: ['./borrow.component.less']
 })
 export class BorrowComponent implements OnInit {
+  @ViewChild('outlet', {read: ViewContainerRef}) outletRef: ViewContainerRef;
+  @ViewChild('trans', {read: TemplateRef}) transRef: TemplateRef<any>;
+
   bookInfoForm!: FormGroup;
   bookStoreForm!: FormGroup;
   books = [];
@@ -24,6 +27,7 @@ export class BorrowComponent implements OnInit {
   inputIsbn = '';
   curLocation = '';
   curStoreLocation = '';
+  bookTransfer: TransferItem[] = [];
 
   constructor(private apiService: ApiService,
               private message: NzMessageService,
@@ -68,11 +72,67 @@ export class BorrowComponent implements OnInit {
   }
 
   // Transfer Books
-  showTransferModal(bookid) {
+  showTransferModal(isbn) {
+    this.apiService.getIsbnInfo(isbn)
+      .subscribe(response => {
+        const data = response.json();
+        const books = data.Data;
+        this.bookTransfer = [];
+        books.forEach(book => {
+          if (book.Location === '图书阅览室') {
+            this.bookTransfer.push({
+              key: book.Id.toString(),
+              title: book.Id.toString(),
+              disabled: false,
+              direction: 'right'
+            });
+          } else if (book.Location === '图书流通室') {
+            this.bookTransfer.push({
+              key: book.Id.toString(),
+              title: book.Id.toString(),
+              disabled: book.Status === '已借出' ? true : false,
+              direction: 'left'
+            });
+          }
+        });
+        this.outletRef.clear();
+        this.outletRef.createEmbeddedView(this.transRef);
+      });
     this.transferVisible = true;
   }
   handleTransferModal() {
     this.transferVisible = false;
+  }
+  transfer(ret) {
+    const arr = [];
+    ret.list.forEach(item => {
+      arr.push(parseInt(item.key, 10));
+    });
+    const req = {
+      UserId: 0,
+      ToCirculate: [],
+      ToOnlyRead: []
+    };
+    if (ret.from === 'left') {
+      req.UserId = parseInt(localStorage.getItem('curUser'), 10);
+      req.ToOnlyRead = arr;
+    } else if (ret.from === 'right') {
+      req.UserId = parseInt(localStorage.getItem('curUser'), 10);
+      req.ToCirculate = arr;
+    }
+    this.apiService.transferBook(req)
+      .subscribe(response => {
+        const data = response.json();
+        if (data.Status === 'success') {
+          this.getBooks();
+          this.message.success(data.Detail);
+          this.transferVisible = false;
+        } else {
+          this.getBooks();
+          this.message.error(data.Detail);
+          this.transferVisible = false;
+        }
+      });
   }
 
   // Add Books

@@ -59,4 +59,9 @@ export class ApiService {
   getHistoryByUser(uid) {
     return this.http.get(`${this.baseUrl}/history?UserId=${uid}`);
   }
+
+  transferBook(info) {
+    const body = JSON.stringify(info);
+    return this.http.post(`${this.baseUrl}/booksTransfer`, body);
+  }
 }
