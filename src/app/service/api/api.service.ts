@@ -19,8 +19,9 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}/register`, body);
   }
 
-  getBooks() {
-    return this.http.get(`${this.baseUrl}/books`);
+  getBooks(search = '') {
+    return search === '' ?
+      this.http.get(`${this.baseUrl}/books`) : this.http.get(`${this.baseUrl}/books?Search=${search}`);
   }
 
   getIsbnInfo(isbn) {
@@ -39,5 +40,14 @@ export class ApiService {
   giveBack(info) {
     const body = JSON.stringify(info);
     return this.http.post(`${this.baseUrl}/return`, body);
+  }
+
+  searchIsbn(isbn) {
+    return this.http.get(`${this.baseUrl}/isbn?Isbn=${isbn}`);
+  }
+
+  addNewBook(info) {
+    const body = JSON.stringify(info);
+    return this.http.post(`${this.baseUrl}/books`, body);
   }
 }
