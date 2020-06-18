@@ -77,13 +77,23 @@ export class BorrowComponent implements OnInit {
 
   // Add Books
   showAddBookModal(info) {
+    const intToStr = (a: number) => {
+      if (a === 0) {
+        return '01';
+      } else if (a < 10) {
+        return '0' + a.toString();
+      } else {
+        return a.toString();
+      }
+    };
+    const pubdate = new Date(Date.parse(info.PublishDate));
     this.bookStoreForm.setValue({
       Isbn: info.Isbn,
       BookName: info.BookName,
       Author: info.Author,
       Coauthor: info.Coauthor,
       Press: info.Press,
-      PublishDate: info.PublishDate,
+      PublishDate: pubdate.getFullYear().toString() + '-' + intToStr(pubdate.getMonth()),
       Location: '',
       Handler: parseInt(this.curUser, 10)
     });
@@ -93,7 +103,20 @@ export class BorrowComponent implements OnInit {
     this.addBookVisible = false;
   }
   addBook() {
-    console.log(this.bookStoreForm.value);
+    console.log(JSON.stringify(this.bookStoreForm.value));
+    this.apiService.addNewBook(this.bookStoreForm.value)
+      .subscribe(response => {
+        const data = response.json();
+        if (data.Status === 'warning') {
+          this.getBooks();
+          this.message.success('成功入库');
+          this.addBookVisible = false;
+        } else {
+          this.getBooks();
+          this.message.error('入库失败');
+          this.addBookVisible = false;
+        }
+      });
   }
 
   // New Books
@@ -197,6 +220,24 @@ export class BorrowComponent implements OnInit {
           this.borrowVisible = false;
         } else {
           this.message.error(data.Detail);
+        }
+      });
+  }
+
+  // Reserve Books
+  reserve(isbn) {
+    this.apiService.reserveBook({
+      UserId: parseInt(localStorage.getItem('curUser'), 10),
+      Isbn: isbn
+    })
+      .subscribe(response => {
+        const data = response.json();
+        if (data.Status === 'success') {
+          this.getBooks();
+          this.message.success('预约成功，该书目空出后将会通过邮箱通知您');
+        } else {
+          this.getBooks();
+          this.message.error('预约失败，请联系管理员');
         }
       });
   }

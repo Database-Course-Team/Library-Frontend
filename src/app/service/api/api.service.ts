@@ -50,4 +50,9 @@ export class ApiService {
     const body = JSON.stringify(info);
     return this.http.post(`${this.baseUrl}/books`, body);
   }
+
+  reserveBook(info) {
+    const body = JSON.stringify(info);
+    return this.http.post(`${this.baseUrl}/reservation`, body);
+  }
 }

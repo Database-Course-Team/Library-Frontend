@@ -5,6 +5,8 @@ import {AuthService} from './service/auth/auth.service';
 import {AuthGuardService} from './service/auth/auth-guard.service';
 import {BorrowComponent} from './component/borrow/borrow.component';
 import {GivebackComponent} from './component/giveback/giveback.component';
+import {ReservationComponent} from './component/reservation/reservation.component';
+import {HistoryComponent} from './component/history/history.component';
 
 
 const routes: Routes = [
@@ -12,6 +14,8 @@ const routes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'borrow', canActivate: [AuthGuardService], component: BorrowComponent},
   {path: 'giveback', canActivate: [AuthGuardService], component: GivebackComponent},
+  {path: 'reservation', canActivate: [AuthGuardService], component: ReservationComponent},
+  {path: 'history', canActivate: [AuthGuardService], component: HistoryComponent}
 ];
 
 @NgModule({

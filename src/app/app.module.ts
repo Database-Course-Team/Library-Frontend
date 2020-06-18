@@ -15,6 +15,8 @@ import zh from '@angular/common/locales/zh';
 import {NgZorroAntdModule} from 'ng-zorro-antd';
 import { BorrowComponent } from './component/borrow/borrow.component';
 import { GivebackComponent } from './component/giveback/giveback.component';
+import { ReservationComponent } from './component/reservation/reservation.component';
+import { HistoryComponent } from './component/history/history.component';
 
 registerLocaleData(zh);
 
@@ -24,6 +26,8 @@ registerLocaleData(zh);
     LoginComponent,
     BorrowComponent,
     GivebackComponent,
+    ReservationComponent,
+    HistoryComponent,
   ],
   imports: [
     BrowserModule,
