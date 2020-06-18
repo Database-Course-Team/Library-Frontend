@@ -178,6 +178,7 @@
   <nz-transfer
     [nzDataSource]="bookTransfer"
     [nzTitles]="['图书流通室', '图书阅览室']"
+    [nzListStyle]="{ 'width.px': 200, 'height.px': 300 }"
     nzShowSearch
     (nzChange)="transfer($event)"
   >

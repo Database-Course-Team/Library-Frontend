@@ -17,6 +17,7 @@ import { BorrowComponent } from './component/borrow/borrow.component';
 import { GivebackComponent } from './component/giveback/giveback.component';
 import { ReservationComponent } from './component/reservation/reservation.component';
 import { HistoryComponent } from './component/history/history.component';
+import { PasswordComponent } from './component/password/password.component';
 
 registerLocaleData(zh);
 
@@ -28,6 +29,7 @@ registerLocaleData(zh);
     GivebackComponent,
     ReservationComponent,
     HistoryComponent,
+    PasswordComponent,
   ],
   imports: [
     BrowserModule,
